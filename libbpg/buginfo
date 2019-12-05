@@ -1,0 +1,20 @@
+segv while using bpgdec $poc
+poc is at https://github.com/cuanduo/fuzz-result/blob/master/libbpg/objects.bpg-out_of_bound-idx:0x85-0x0
+asan output
+```
+root@ubuntu:/home/tim/libbpg-0.9.8-asan# ./bpgdec overflows/objects.bpg-out_of_bound-idx\:0x85-0x0
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==16138==ERROR: AddressSanitizer: SEGV on unknown address 0x624fffff3b86 (pc 0x7f05f1c9e10e bp 0x7ffd58b291a0 sp 0x7ffd58b28908 T0)
+==16138==The signal is caused by a READ memory access.
+    #0 0x7f05f1c9e10d  (/lib/x86_64-linux-gnu/libc.so.6+0xba10d)
+    #1 0x7f05f1ea007e  (/lib/x86_64-linux-gnu/libasan.so.5+0x9a07e)
+    #2 0x55975359319f in memcpy /usr/include/x86_64-linux-gnu/bits/string_fortified.h:34
+    #3 0x55975359319f in restore_tqb_pixels libavcodec/hevc_filter.c:228
+    #4 0x55975359319f in restore_tqb_pixels libavcodec/hevc_filter.c:205
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (/lib/x86_64-linux-gnu/libc.so.6+0xba10d)
+==16138==ABORTING
+
+```
