@@ -18,3 +18,32 @@ SUMMARY: AddressSanitizer: SEGV (/lib/x86_64-linux-gnu/libc.so.6+0xba10d)
 ==16138==ABORTING
 
 ```
+gdb backtrace
+Stopped reason: SIGSEGV
+__memmove_sse2_unaligned_erms () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:312
+312	../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S: No such file or directory.
+gdb-peda$ bt
+#0  __memmove_sse2_unaligned_erms () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:312
+#1  0x00007ffff762007f in ?? () from /lib/x86_64-linux-gnu/libasan.so.5
+#2  0x000055555559d1a0 in memcpy (__len=0x8, __src=0x624fffff3e86, __dest=<optimized out>) at /usr/include/x86_64-linux-gnu/bits/string_fortified.h:34
+#3  restore_tqb_pixels (c_idx=0x0, height=0x30, width=0x40, y0=0x80, x0=<optimized out>, stride_dst=<optimized out>, stride_src=0x200, dst1=0x625000000486 "\200", src1=0x633000010800 "\200", s=0x627000000400) at libavcodec/hevc_filter.c:228
+#4  restore_tqb_pixels (s=0x627000000400, src1=0x633000010800 "\200", dst1=0x625000000486 "\200", stride_src=0x200, stride_dst=<optimized out>, x0=<optimized out>, y0=0x80, width=0x40, height=0x30, c_idx=0x0) at libavcodec/hevc_filter.c:205
+#5  0x00005555555a02e6 in sao_filter_CTB (s=s@entry=0x627000000400, x=x@entry=0x0, y=y@entry=0x80) at libavcodec/hevc_filter.c:468
+#6  0x00005555555a2fe0 in ff_hevc_hls_filter (s=s@entry=0x627000000400, x=x@entry=0x40, y=y@entry=0x80, ctb_size=ctb_size@entry=0x40) at libavcodec/hevc_filter.c:892
+#7  0x00005555555a32d8 in ff_hevc_hls_filters (s=s@entry=0x627000000400, x_ctb=x_ctb@entry=0x80, y_ctb=y_ctb@entry=0x80, ctb_size=ctb_size@entry=0x40) at libavcodec/hevc_filter.c:916
+#8  0x000055555556e192 in hls_decode_entry (avctxt=<optimized out>, isFilterThread=<optimized out>) at libavcodec/hevc.c:2395
+#9  0x0000555555593c4e in avcodec_default_execute (c=0x61d000000400, func=0x55555556c085 <hls_decode_entry>, arg=<optimized out>, ret=0x7fffffffd850, count=<optimized out>, size=0x4) at libavcodec/utils.c:121
+#10 0x00005555555752f2 in hls_slice_data (s=0x627000000400) at libavcodec/hevc.c:2413
+#11 decode_nal_unit (length=<optimized out>, nal=<optimized out>, s=0x627000000400) at libavcodec/hevc.c:2826
+#12 decode_nal_units (length=<optimized out>, buf=<optimized out>, s=0x627000000400) at libavcodec/hevc.c:3063
+#13 hevc_decode_frame (avctx=<optimized out>, data=<optimized out>, got_output=<optimized out>, avpkt=<optimized out>) at libavcodec/hevc.c:3193
+#14 0x0000555555594883 in avcodec_decode_video2 (avctx=avctx@entry=0x61d000000400, picture=picture@entry=0x61a000000a00, got_picture_ptr=got_picture_ptr@entry=0x7fffffffdaa0, avpkt=avpkt@entry=0x7fffffffdae0) at libavcodec/utils.c:242
+#15 0x000055555555d735 in hevc_write_frame (avctx=<optimized out>, frame=0x61a000000a00, buf=<optimized out>, buf_len=0x3b0) at libbpg.c:401
+#16 0x000055555555dbd2 in hevc_decode_frame_internal (s=s@entry=0x61a000000400, abuf=abuf@entry=0x7fffffffdd40, cbuf=cbuf@entry=0x7fffffffdd80, buf=<optimized out>, buf_len1=buf_len1@entry=0x397, first_nal=<optimized out>, first_nal@entry=0x1)
+    at libbpg.c:486
+#17 0x0000555555562eba in hevc_decode_start (has_alpha=<optimized out>, bit_depth=<optimized out>, chroma_format_idc=<optimized out>, height=<optimized out>, width=<optimized out>, buf_len1=<optimized out>, buf=<optimized out>, s=0x61a000000400)
+    at libbpg.c:528
+#18 bpg_decoder_decode (img=0x61a000000400, buf=<optimized out>, buf_len=<optimized out>) at libbpg.c:1860
+#19 0x000055555555a50a in main (argc=argc@entry=0x2, argv=argv@entry=0x7fffffffe088) at bpgdec.c:332
+#20 0x00007ffff738ab6b in __libc_start_main (main=0x555555559da6 <main>, argc=0x2, argv=0x7fffffffe088, init=<optimized out>, fini=<optimized out>, rtld_fini=<optimized out>, stack_end=0x7fffffffe078) at ../csu/libc-start.c:308
+#21 0x000055555555a93a in _start () at bpgdec.c:353
